@@ -45,14 +45,19 @@ object Common {
         val spannableString = SpannableString(name)
         val boldSpan = StyleSpan(Typeface.BOLD)
         spannableString.setSpan(boldSpan, 0, name!!.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannableString.setSpan(ForegroundColorSpan(color), 0, name!!.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(
+            ForegroundColorSpan(color),
+            0,
+            name!!.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
         builder.append(spannableString)
         textView.setText(builder, TextView.BufferType.SPANNABLE)
 
     }
 
     fun convertStatusToString(orderStatus: Int): String? {
-        when(orderStatus){
+        when (orderStatus) {
             0 -> return "Placed"
             1 -> return "Shipping"
             2 -> return "Shipped"
@@ -66,7 +71,9 @@ object Common {
             .getReference(TOKEN_REF)
             .child(currentServerUser!!.uid!!)
             .setValue(TokenModel(currentServerUser!!.phone!!, token))
-            .addOnFailureListener { e -> Toast.makeText(context, ""+e.message, Toast.LENGTH_SHORT).show() }
+            .addOnFailureListener { e ->
+                Toast.makeText(context, "" + e.message, Toast.LENGTH_SHORT).show()
+            }
     }
 
     fun createOrderNumber(): String {
@@ -77,18 +84,30 @@ object Common {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun showNotification(context: Context, id: Int, title: String?, content: String?, intent: Intent?) {
+    fun showNotification(
+        context: Context,
+        id: Int,
+        title: String?,
+        content: String?,
+        intent: Intent?
+    ) {
         Log.d("Notification", "Tittle:$title, Content:$content")
 
-        var pendingIntent: PendingIntent?= null
-        if(intent != null){
-            pendingIntent = PendingIntent.getActivity(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        var pendingIntent: PendingIntent? = null
+        if (intent != null) {
+            pendingIntent =
+                PendingIntent.getActivity(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
             val NOTIFICATION_CHANNEL_ID = "pham.thuc.myrestaurantv2.server"
 
-            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-            val notificationChannel = NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Restaurant V2", NotificationManager.IMPORTANCE_DEFAULT)
+            val notificationChannel = NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                "My Restaurant V2",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
             notificationChannel.description = "My Restaurant V2 Channel"
             notificationChannel.enableLights(true)
             notificationChannel.enableVibration(true)
@@ -100,9 +119,14 @@ object Common {
             val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             builder.setContentTitle(title).setContentText(content).setAutoCancel(true)
                 .setSmallIcon(R.mipmap.ic_launcher_round)
-                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_restaurant_24))
+                .setLargeIcon(
+                    BitmapFactory.decodeResource(
+                        context.resources,
+                        R.drawable.ic_restaurant_24
+                    )
+                )
 
-            if(pendingIntent != null)
+            if (pendingIntent != null)
                 builder.setContentIntent(pendingIntent)
 
             val notification = builder.build()
@@ -115,6 +139,7 @@ object Common {
         return java.lang.StringBuilder("/topics/new_order").toString()
     }
 
+    val SHIPPER_REF: String = "Shippers"
     val NOTI_CONTENT: String = "Content"
     val NOTI_TITLE: String = "Title"
     val TOKEN_REF: String = "Tokens"
