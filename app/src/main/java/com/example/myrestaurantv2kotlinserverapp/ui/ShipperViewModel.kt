@@ -57,21 +57,21 @@ class ShipperViewModel : ViewModel(), IShipperLoadCallbackListener {
     }
 
 
-    override fun onShipperLoadSuccess(
-        pos: Int,
-        orderModel: OrderModel?,
-        shipperModels: List<ShipperModel?>?,
-        dialog: AlertDialog?,
-        btn_ok: Button?,
-        btn_cancel: Button?,
-        rdi_shipping: RadioButton?,
-        rdi_shipped: RadioButton?,
-        rdi_cancelled: RadioButton?,
-        rdi_delete: RadioButton?,
-        rdi_restore_placed: RadioButton?
-    ) {
-        //Do nothing
-    }
+//    override fun onShipperLoadSuccess(
+//        pos: Int,
+//        orderModel: OrderModel?,
+//        shipperModels: List<ShipperModel>?,
+//        dialog: AlertDialog?,
+//        btn_ok: Button?,
+//        btn_cancel: Button?,
+//        rdi_shipping: RadioButton?,
+//        rdi_shipped: RadioButton?,
+//        rdi_cancelled: RadioButton?,
+//        rdi_delete: RadioButton?,
+//        rdi_restore_placed: RadioButton?
+//    ) {
+//        //Do nothing
+//    }
 
     override fun onShipperLoadFailed(message: String?) {
         messageError!!.value = message
