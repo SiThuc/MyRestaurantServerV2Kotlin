@@ -20,6 +20,7 @@ import com.example.myrestaurantv2kotlinserverapp.common.Common
 import com.example.myrestaurantv2kotlinserverapp.evenbus.*
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -40,6 +41,8 @@ class HomeActivity : AppCompatActivity() {
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+
+        updateToken()
 
         subscribeToTopic(Common.getNewOrderTopic())
 
@@ -95,6 +98,17 @@ class HomeActivity : AppCompatActivity() {
 
         menuClick = R.id.nav_category  //Default
 
+    }
+
+    private fun updateToken() {
+        FirebaseInstanceId.getInstance()
+                .instanceId
+                .addOnFailureListener {e->
+                    Toast.makeText(this@HomeActivity, e.message.toString(), Toast.LENGTH_SHORT).show()
+                }
+                .addOnSuccessListener { instanceIdResult ->
+                    Common.updateToken(this@HomeActivity, instanceIdResult.token, true, false)
+                }
     }
 
     private fun subscribeToTopic(newOrderTopic: String) {

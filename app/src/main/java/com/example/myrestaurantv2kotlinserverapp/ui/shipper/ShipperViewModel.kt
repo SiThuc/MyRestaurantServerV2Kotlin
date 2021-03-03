@@ -1,13 +1,9 @@
-package com.example.myrestaurantv2kotlinserverapp.ui
+package com.example.myrestaurantv2kotlinserverapp.ui.shipper
 
-import android.app.AlertDialog
-import android.widget.Button
-import android.widget.RadioButton
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myrestaurantv2kotlinserverapp.callback.IShipperLoadCallbackListener
 import com.example.myrestaurantv2kotlinserverapp.common.Common
-import com.example.myrestaurantv2kotlinserverapp.model.OrderModel
 import com.example.myrestaurantv2kotlinserverapp.model.ShipperModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -32,7 +28,7 @@ class ShipperViewModel : ViewModel(), IShipperLoadCallbackListener {
         return shipperMutableList!!
     }
 
-    private fun loadShipperList() {
+    fun loadShipperList() {
         val tempList = ArrayList<ShipperModel>()
         val shipperRef = FirebaseDatabase.getInstance().getReference(Common.SHIPPER_REF)
         shipperRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -55,23 +51,6 @@ class ShipperViewModel : ViewModel(), IShipperLoadCallbackListener {
         if (shipperModelList != null)
             shipperMutableList!!.value = shipperModelList
     }
-
-
-//    override fun onShipperLoadSuccess(
-//        pos: Int,
-//        orderModel: OrderModel?,
-//        shipperModels: List<ShipperModel>?,
-//        dialog: AlertDialog?,
-//        btn_ok: Button?,
-//        btn_cancel: Button?,
-//        rdi_shipping: RadioButton?,
-//        rdi_shipped: RadioButton?,
-//        rdi_cancelled: RadioButton?,
-//        rdi_delete: RadioButton?,
-//        rdi_restore_placed: RadioButton?
-//    ) {
-//        //Do nothing
-//    }
 
     override fun onShipperLoadFailed(message: String?) {
         messageError!!.value = message

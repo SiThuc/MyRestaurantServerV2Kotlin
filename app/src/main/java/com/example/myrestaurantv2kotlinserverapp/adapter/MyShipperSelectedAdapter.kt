@@ -20,8 +20,10 @@ class MyShipperSelectedAdapter(
         var shipperList: List<ShipperModel>
 ) : RecyclerView.Adapter<MyShipperSelectedAdapter.MyViewHolder>() {
     lateinit var binding: LayoutShipperSelectedBinding
-    private var lastCheckedImageView: ImageView? = null
+
+    //private var lastCheckedImageView: ImageView? = null
     private var selectedShipper: ShipperModel? = null
+    private var isChecked: Boolean = false
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         private var listener: IRecyclerItemClickListener? = null
@@ -38,6 +40,7 @@ class MyShipperSelectedAdapter(
             listener!!.onItemClick(v!!, adapterPosition)
         }
 
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -48,35 +51,44 @@ class MyShipperSelectedAdapter(
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         with(holder) {
             val shipper = shipperList[position]
+
             binding.txtName.text = shipper.name
             binding.txtPhone.text = shipper.phone
 
-            //Event
             setListener(object : IRecyclerItemClickListener{
                 override fun onItemClick(view: View, pos: Int) {
-                    if(lastCheckedImageView != null){
-                        lastCheckedImageView!!.setImageResource(0)
-                        binding.imgChecked.visibility = View.GONE
-                        lastCheckedImageView = null
-                        selectedShipper = null
-                    }else{
+                    if (!isChecked) {
                         binding.imgChecked.setImageResource(R.drawable.ic_check_circle_outline_24)
-                        binding.imgChecked.visibility = View.VISIBLE
-                        lastCheckedImageView = binding.imgChecked
                         selectedShipper = shipper
-
+                        isChecked = true
+                    } else {
+                        binding.imgChecked.setImageResource(0)
+                        selectedShipper = null
+                        isChecked = false
                     }
                 }
             })
 
+           /* //Event
+            binding.imgChecked.setOnClickListener {
+                if (!isChecked) {
+                    binding.imgChecked.setImageResource(R.drawable.ic_check_circle_outline_24)
+                    selectedShipper = shipper
+                    isChecked = true
+                } else {
+                    binding.imgChecked.setImageResource(0)
+                    selectedShipper = null
+                    isChecked = false
+                }
+            }*/
         }
     }
 
     fun getSelectedShipper(): ShipperModel? {
-        if(selectedShipper!= null)
-            return selectedShipper!!
+        return if (selectedShipper != null)
+            selectedShipper!!
         else
-            return null
+            null
     }
 
     override fun getItemCount(): Int = shipperList.size

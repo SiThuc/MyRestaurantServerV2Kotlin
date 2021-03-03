@@ -36,7 +36,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_shipper"
-        android:name="com.example.myrestaurantv2kotlinserverapp.ui.ShipperFragment"
+        android:name="com.example.myrestaurantv2kotlinserverapp.ui.shipper.ShipperFragment"
         android:label="Shipper List"
         tools:layout="@layout/fragment_shipper" />
 </navigation>

@@ -4,14 +4,13 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.session.MediaSession
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
-import android.widget.Button
-import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -29,13 +28,11 @@ import com.example.myrestaurantv2kotlinserverapp.databinding.LayoutDialogCancell
 import com.example.myrestaurantv2kotlinserverapp.databinding.LayoutDialogShippedBinding
 import com.example.myrestaurantv2kotlinserverapp.databinding.LayoutDialogShippingBinding
 import com.example.myrestaurantv2kotlinserverapp.evenbus.*
-import com.example.myrestaurantv2kotlinserverapp.model.FCMSendData
-import com.example.myrestaurantv2kotlinserverapp.model.OrderModel
-import com.example.myrestaurantv2kotlinserverapp.model.ShipperModel
-import com.example.myrestaurantv2kotlinserverapp.model.TokenModel
+import com.example.myrestaurantv2kotlinserverapp.model.*
 import com.example.myrestaurantv2kotlinserverapp.services.IFCMService
 import com.example.myrestaurantv2kotlinserverapp.services.RetrofitFCMClient
 import com.example.myrestaurantv2kotlinserverapp.ui.dialogs.BottomSheetOrderFragment
+import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -66,7 +63,7 @@ class OrderFragment : Fragment(), IShipperLoadCallbackListener {
     lateinit var orderAdapter: MyOrderAdapter
     lateinit var dialogLayoutBinding: LayoutDialogShippingBinding
 
-    var shipperSelectedAdapter: MyShipperSelectedAdapter? = null
+    lateinit var shipperSelectedAdapter: MyShipperSelectedAdapter
     lateinit var shipperLoadCallbackListener: IShipperLoadCallbackListener
 
     override fun onCreateView(
@@ -284,6 +281,7 @@ class OrderFragment : Fragment(), IShipperLoadCallbackListener {
 
         val dialog = builder!!.create()
         dialog.show()
+
         //Custom Dialog
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.setGravity(Gravity.CENTER)
@@ -320,21 +318,74 @@ class OrderFragment : Fragment(), IShipperLoadCallbackListener {
                 updateOrder(position, order, -1)
                 dialog.dismiss()
             } else if (dialogLayoutBinding.rdiShipping.isChecked) {
-                if (shipperSelectedAdapter != null) {
-                    if(shipperSelectedAdapter!!.getSelectedShipper() == null)
-                        Toast.makeText(requireContext(), "Please choose Shipper to continue!", Toast.LENGTH_SHORT).show()
-                    else{
-                        val shipperModel = shipperSelectedAdapter!!.getSelectedShipper()
-                        Toast.makeText(requireContext(), "Selected Shipper: " + shipperModel!!.name, Toast.LENGTH_SHORT).show()
-                        updateOrder(position, order, 1)
+                if (shipperSelectedAdapter.getSelectedShipper() == null)
+                    Toast.makeText(requireContext(), "Please choose Shipper to continue!", Toast.LENGTH_SHORT).show()
+                else {
+                    val shipperModel = shipperSelectedAdapter.getSelectedShipper()
+//                        Toast.makeText(requireContext(), "Selected Shipper: " + shipperModel!!.name, Toast.LENGTH_SHORT).show()
+                    createShipperOrder(position, shipperModel, order, dialog)
+//                        updateOrder(position, order, 1)
+                    dialog.dismiss()
+                }
+            }
+        }
+    }
+
+    private fun createShipperOrder(position: Int, shipperModel: ShipperModel?, order: OrderModel, dialog: AlertDialog) {
+        val shippingOrder = ShipperOrderModel()
+
+        shippingOrder.shipperPhone = shipperModel!!.phone
+        shippingOrder.shipperName = shipperModel!!.name
+        shippingOrder.orderModel = order
+
+        FirebaseDatabase.getInstance()
+                .getReference(Common.SHIPPING_ORDER_REF)
+                .push()
+                .setValue(shippingOrder)
+                .addOnFailureListener { e: java.lang.Exception ->
+                    dialog.dismiss()
+                    Toast.makeText(context, "" + e.message, Toast.LENGTH_SHORT).show()
+                }
+                .addOnCompleteListener { task: Task<Void?> ->
+                    if (task.isSuccessful) {
                         dialog.dismiss()
+
+                        //Load token
+                        FirebaseDatabase.getInstance()
+                                .getReference(Common.TOKEN_REF)
+                                .child(shipperModel.key!!)
+                                .addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(snapshot: DataSnapshot) {
+                                        if (snapshot.exists()) {
+                                            val tokenModel = snapshot.getValue(TokenModel::class.java)
+                                            val notiData = HashMap<String, String>()
+                                            notiData.put(Common.NOTI_TITLE, "You have a new Order to ship")
+                                            notiData.put(Common.NOTI_CONTENT, StringBuilder("Order to :").append(order.userPhone).toString())
+
+                                            val sendData = FCMSendData(tokenModel!!.token!!, notiData)
+                                            compositeDisposable.add(
+                                                    ifcmService.sendNotification(sendData)
+                                                            .subscribeOn(Schedulers.io())
+                                                            .observeOn(AndroidSchedulers.mainThread())
+                                                            .subscribe({ fcmResponse ->
+                                                                dialog.dismiss()
+                                                                if (fcmResponse.success == 1) {
+                                                                    updateOrder(position, order, 1)
+                                                                } else
+                                                                    Toast.makeText(requireContext(), "Failed to send Notification!Order wasn't updated", Toast.LENGTH_SHORT).show()
+                                                            })
+                                            )
+                                        }
+                                    }
+
+                                    override fun onCancelled(error: DatabaseError) {
+                                        dialog.dismiss()
+                                        Toast.makeText(requireContext(), error.message.toString(), Toast.LENGTH_SHORT).show()
+                                    }
+                                })
+
                     }
                 }
-
-
-            }
-
-        }
     }
 
     private fun showShippedDialog(order: OrderModel, position: Int, dialogLayoutBinding: LayoutDialogShippedBinding, builder: AlertDialog.Builder?) {
@@ -463,18 +514,6 @@ class OrderFragment : Fragment(), IShipperLoadCallbackListener {
             dialogLayoutBinding.recyclerShippers.adapter = shipperSelectedAdapter
         }
     }
-
-//    override fun onShipperLoadSuccess(pos: Int, orderModel: OrderModel?, shipperModels: List<ShipperModel>?, dialog: android.app.AlertDialog?, btn_ok: Button?, btn_cancel: Button?, rdi_shipping: RadioButton?, rdi_shipped: RadioButton?, rdi_cancelled: RadioButton?, rdi_delete: RadioButton?, rdi_restore_placed: RadioButton?) {
-//        if (dialogLayoutBinding.recyclerShippers != null) {
-//            dialogLayoutBinding.recyclerShippers.setHasFixedSize(true)
-//            val layoutManager = LinearLayoutManager(requireContext())
-//            dialogLayoutBinding.recyclerShippers.layoutManager = layoutManager
-//            dialogLayoutBinding.recyclerShippers.addItemDecoration(DividerItemDecoration(requireContext(), layoutManager.orientation))
-//            shipperSelectedAdapter = MyShipperSelectedAdapter(requireContext(), shipperModels!!)
-//
-//            dialogLayoutBinding.recyclerShippers.adapter = shipperSelectedAdapter
-//        }
-//    }
 
     override fun onShipperLoadFailed(message: String?) {
         Toast.makeText(requireContext(), message.toString(), Toast.LENGTH_SHORT).show()

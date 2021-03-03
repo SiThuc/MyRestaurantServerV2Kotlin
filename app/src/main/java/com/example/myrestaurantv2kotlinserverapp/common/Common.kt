@@ -66,11 +66,11 @@ object Common {
         }
     }
 
-    fun updateToken(context: Context, token: String) {
+    fun updateToken(context: Context, token: String, isServerToken: Boolean, isShipperToken: Boolean) {
         FirebaseDatabase.getInstance()
             .getReference(TOKEN_REF)
             .child(currentServerUser!!.uid!!)
-            .setValue(TokenModel(currentServerUser!!.phone!!, token))
+            .setValue(TokenModel(currentServerUser!!.phone!!, token, isServerToken, isShipperToken))
             .addOnFailureListener { e ->
                 Toast.makeText(context, "" + e.message, Toast.LENGTH_SHORT).show()
             }
@@ -139,6 +139,7 @@ object Common {
         return java.lang.StringBuilder("/topics/new_order").toString()
     }
 
+    val SHIPPING_ORDER_REF: String = "ShipperOrders"
     val SHIPPER_REF: String = "Shippers"
     val NOTI_CONTENT: String = "Content"
     val NOTI_TITLE: String = "Title"
