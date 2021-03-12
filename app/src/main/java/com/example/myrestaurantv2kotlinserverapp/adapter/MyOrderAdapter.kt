@@ -21,6 +21,7 @@ import com.example.myrestaurantv2kotlinserverapp.databinding.LayoutDialogOrderDe
 import com.example.myrestaurantv2kotlinserverapp.databinding.LayoutOrderItemBinding
 import com.example.myrestaurantv2kotlinserverapp.evenbus.CallCustomerEvent
 import com.example.myrestaurantv2kotlinserverapp.evenbus.DeleteOrderEvent
+import com.example.myrestaurantv2kotlinserverapp.evenbus.TrackOrderEvent
 import com.example.myrestaurantv2kotlinserverapp.evenbus.UpdateOrderEvent
 import com.example.myrestaurantv2kotlinserverapp.model.OrderModel
 import org.greenrobot.eventbus.EventBus
@@ -108,6 +109,12 @@ class MyOrderAdapter(
                 EventBus.getDefault().postSticky(UpdateOrderEvent(order, position))
             }
 
+            //Show the directions
+            binding.btnDirection.setOnClickListener {
+                Log.d("DEBUG", "Direction clicked")
+                EventBus.getDefault().postSticky(TrackOrderEvent(order, position))
+            }
+
             binding.imgFoodImage.setOnClickListener {
                 showDialog(order.cartItemList)
             }
@@ -152,5 +159,9 @@ class MyOrderAdapter(
 
     fun removeItem(order: OrderModel) {
         orderList.remove(order)
+    }
+
+    fun getItemAtPosition(position:Int): OrderModel{
+        return orderList[position]
     }
 }

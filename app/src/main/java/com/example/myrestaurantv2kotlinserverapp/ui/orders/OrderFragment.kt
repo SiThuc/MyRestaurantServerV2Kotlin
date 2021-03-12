@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myrestaurantv2kotlinserverapp.R
+import com.example.myrestaurantv2kotlinserverapp.TrackingOrderActivity
 import com.example.myrestaurantv2kotlinserverapp.adapter.MyOrderAdapter
 import com.example.myrestaurantv2kotlinserverapp.adapter.MyShipperSelectedAdapter
 import com.example.myrestaurantv2kotlinserverapp.callback.IShipperLoadCallbackListener
@@ -499,6 +500,26 @@ class OrderFragment : Fragment(), IShipperLoadCallbackListener {
             Toast.makeText(context, "Order number must not be null or empty", Toast.LENGTH_SHORT).show()
         }
     }
+
+
+    //Listen for event when user click on Tracking Order
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onTrackOrderEvent(event: TrackOrderEvent) {
+        val orderModel = (binding.recyclerOrder.adapter as MyOrderAdapter).getItemAtPosition(event.position)
+        if(orderModel.orderStatus == 1) { //Shipping status
+
+            Common.currentOrderSelected = orderModel
+            startActivity(Intent(requireActivity(), TrackingOrderActivity::class.java))
+        }else{
+            Toast.makeText(requireContext(), StringBuilder("The order has been")
+                .append(Common.convertStatusToString(orderModel.orderStatus))
+                .append(". SO you can not track directions.").toString(), Toast.LENGTH_SHORT).show()
+        }
+
+        EventBus.getDefault().removeStickyEvent(event)
+    }
+
+
 
     private fun updateTextCounter() {
         binding.txtOrderFilter.text = StringBuilder("Order (").append(orderAdapter.itemCount).append(")")

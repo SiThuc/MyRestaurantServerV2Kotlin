@@ -20,10 +20,8 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.myrestaurantv2kotlinserverapp.R
-import com.example.myrestaurantv2kotlinserverapp.model.CategoryModel
-import com.example.myrestaurantv2kotlinserverapp.model.FoodModel
-import com.example.myrestaurantv2kotlinserverapp.model.ServerUserModel
-import com.example.myrestaurantv2kotlinserverapp.model.TokenModel
+import com.example.myrestaurantv2kotlinserverapp.model.*
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.FirebaseDatabase
 import java.util.*
 
@@ -66,15 +64,27 @@ object Common {
         }
     }
 
-    fun updateToken(context: Context, token: String, isServerToken: Boolean, isShipperToken: Boolean) {
-        if(currentServerUser != null)
+    fun updateToken(
+        context: Context,
+        token: String,
+        isServerToken: Boolean,
+        isShipperToken: Boolean
+    ) {
+        if (currentServerUser != null)
             FirebaseDatabase.getInstance()
-                    .getReference(TOKEN_REF)
-                    .child(currentServerUser!!.uid!!)
-                    .setValue(TokenModel(currentServerUser!!.phone!!, token, isServerToken, isShipperToken))
-                    .addOnFailureListener { e ->
-                        Toast.makeText(context, "" + e.message, Toast.LENGTH_SHORT).show()
-                    }
+                .getReference(TOKEN_REF)
+                .child(currentServerUser!!.uid!!)
+                .setValue(
+                    TokenModel(
+                        currentServerUser!!.phone!!,
+                        token,
+                        isServerToken,
+                        isShipperToken
+                    )
+                )
+                .addOnFailureListener { e ->
+                    Toast.makeText(context, "" + e.message, Toast.LENGTH_SHORT).show()
+                }
     }
 
     fun createOrderNumber(): String {
@@ -140,6 +150,43 @@ object Common {
         return java.lang.StringBuilder("/topics/new_order").toString()
     }
 
+    fun decodePoly(encoded: String): List<LatLng> {
+        val poly: MutableList<LatLng> = ArrayList<LatLng>()
+        var index = 0
+        var len = encoded.length
+        var lat = 0
+        var lng = 0
+        while (index < len) {
+            var b: Int
+            var shift = 0
+            var result = 0
+
+            do {
+                b = encoded[index++].toInt() - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+
+            val dlat = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+            lat += dlat
+            shift = 0
+            result = 0
+
+            do {
+                b = encoded[index++].toInt() - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+
+            val dlng = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+            lng += dlng
+            val p = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
+            poly.add(p)
+        }
+        return poly
+    }
+
+    var currentOrderSelected: OrderModel? = null
     val SHIPPING_ORDER_REF: String = "ShipperOrders"
     val SHIPPER_REF: String = "Shippers"
     val NOTI_CONTENT: String = "Content"

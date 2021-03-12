@@ -44,16 +44,16 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/btn_add_on"-->
-<!--            android:background="@android:color/holo_green_dark"-->
-<!--            android:layout_width="60dp"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:gravity="center"-->
-<!--            android:fontFamily="@font/brandon_medium"-->
-<!--            android:text="Addon"-->
-<!--            android:textSize="18sp"-->
-<!--            android:textStyle="bold" />-->
+        <TextView
+            android:id="@+id/btn_direction"
+            android:background="@android:color/holo_orange_dark"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:fontFamily="@font/brandon_medium"
+            android:text="Directions"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
 
     </LinearLayout>
