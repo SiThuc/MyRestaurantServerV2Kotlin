@@ -225,9 +225,7 @@ class OrderFragment : Fragment(), IShipperLoadCallbackListener {
     //Listen for event when user click on Update Order
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onUpdateOrderEvent(event: UpdateOrderEvent) {
-        if (event != null) {
-            showUpdateDialog(event.order, event.position)
-        }
+        showUpdateDialog(event.order, event.position)
         EventBus.getDefault().removeStickyEvent(event)
     }
 
@@ -321,26 +319,29 @@ class OrderFragment : Fragment(), IShipperLoadCallbackListener {
                 if (shipperSelectedAdapter.getSelectedShipper() == null)
                     Toast.makeText(requireContext(), "Please choose Shipper to continue!", Toast.LENGTH_SHORT).show()
                 else {
+                    updateOrder(position, order, 1)
                     val shipperModel = shipperSelectedAdapter.getSelectedShipper()
-//                        Toast.makeText(requireContext(), "Selected Shipper: " + shipperModel!!.name, Toast.LENGTH_SHORT).show()
-                    createShipperOrder(position, shipperModel, order, dialog)
-//                        updateOrder(position, order, 1)
+                    createShipperOrder(position, shipperModel, order, dialog, 1)
                     dialog.dismiss()
                 }
             }
         }
     }
 
-    private fun createShipperOrder(position: Int, shipperModel: ShipperModel?, order: OrderModel, dialog: AlertDialog) {
-        val shippingOrder = ShipperOrderModel()
+    private fun createShipperOrder(position: Int, shipperModel: ShipperModel?, order: OrderModel, dialog: AlertDialog, newStatus:Int) {
 
+        val shippingOrder = ShipperOrderModel()
         shippingOrder.shipperPhone = shipperModel!!.phone
         shippingOrder.shipperName = shipperModel!!.name
         shippingOrder.orderModel = order
+        shippingOrder.orderModel!!.orderStatus = newStatus
+        shippingOrder.isStartTrip = false
+        shippingOrder.currentLat = -1.0
+        shippingOrder.currentLng = -1.0
 
         FirebaseDatabase.getInstance()
                 .getReference(Common.SHIPPING_ORDER_REF)
-                .push()
+                .child(order.key!!)  //Change push() to key()
                 .setValue(shippingOrder)
                 .addOnFailureListener { e: java.lang.Exception ->
                     dialog.dismiss()
@@ -453,11 +454,11 @@ class OrderFragment : Fragment(), IShipperLoadCallbackListener {
                                         if (snapshot.exists()) {
                                             val tokenModel = snapshot.getValue(TokenModel::class.java)
                                             val notiData = HashMap<String, String>()
-                                            notiData.put(Common.NOTI_TITLE, "Your order was updated")
-                                            notiData.put(Common.NOTI_CONTENT, StringBuilder("Your order")
+                                            notiData[Common.NOTI_TITLE] = "Your order was updated"
+                                            notiData[Common.NOTI_CONTENT] = StringBuilder("Your order")
                                                     .append(order.key!!)
                                                     .append("was updated to")
-                                                    .append(Common.convertStatusToString(newStatus)).toString())
+                                                    .append(Common.convertStatusToString(newStatus)).toString()
                                             val sendData = FCMSendData(tokenModel!!.token!!, notiData)
 
                                             compositeDisposable.add(
