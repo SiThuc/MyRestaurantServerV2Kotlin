@@ -202,6 +202,7 @@ object Common {
 
     }
 
+    val MOST_POPULAR: String = "MostPopular"
     var bestDealsSelected: BestDealsModel? = null
     val BEST_DEALS: String = "BestDeals"
     var currentOrderSelected: OrderModel? = null

@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context=".ui.bestdeals.BestDealsFragment">
+    tools:context=".ui.mostpopular.MostPopularFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_best_deals"
+        android:id="@+id/recycler_most_popular"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </RelativeLayout>

@@ -48,6 +48,18 @@
     </fragment>
 
     <fragment
+        android:id="@+id/nav_most_popular"
+        android:name="com.example.myrestaurantv2kotlinserverapp.ui.mostpopular.MostPopularFragment"
+        android:label="@string/menu_most_popular"
+        tools:layout="@layout/fragment_most_popular" >
+        <action
+            android:id="@+id/clearBackStack"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/nav_category"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
         android:id="@+id/nav_shipper"
         android:name="com.example.myrestaurantv2kotlinserverapp.ui.shipper.ShipperFragment"
         android:label="Shipper List"
