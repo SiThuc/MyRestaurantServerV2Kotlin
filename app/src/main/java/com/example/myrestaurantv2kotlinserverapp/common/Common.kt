@@ -202,6 +202,7 @@ object Common {
 
     }
 
+    val BEST_DEALS: String = "BestDeals"
     var currentOrderSelected: OrderModel? = null
     val SHIPPING_ORDER_REF: String = "ShipperOrders"
     val SHIPPER_REF: String = "Shippers"

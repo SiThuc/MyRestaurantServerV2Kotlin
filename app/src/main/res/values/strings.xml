@@ -25,4 +25,6 @@
     <string name="update">Update</string>
     <string name="menu_shipper">Shipper List</string>
     <string name="title_activity_tracking_order">Map</string>
+    <string name="menu_best_deals">Best Deals</string>
+    <string name="menu_most_popular">Most Popular</string>
 </resources>

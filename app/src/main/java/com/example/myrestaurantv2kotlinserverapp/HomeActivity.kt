@@ -85,6 +85,11 @@ class HomeActivity : AppCompatActivity() {
                     navController.popBackStack()
                     navController.navigate(R.id.nav_shipper)
                 }
+            }else if (item.itemId == R.id.nav_best_deals) {
+                if (menuClick != item.itemId) {
+                    navController.popBackStack()
+                    navController.navigate(R.id.nav_best_deals)
+                }
             }
 
             menuClick = item.itemId
