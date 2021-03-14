@@ -6,20 +6,29 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:mode="same_level"
-    app:dragEdge="left">
+    app:dragEdge="right">
 
     <!-- Your secondary layout here -->
     <LinearLayout
-        android:layout_width="100dp"
-        android:background="@android:color/holo_blue_light"
+        android:layout_width="160dp"
         android:gravity="center"
         android:layout_height="match_parent">
         <TextView
             android:id="@+id/btn_update"
-            android:layout_width="100dp"
+            android:layout_width="80dp"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="Update"
+            android:background="@android:color/holo_blue_light"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/btn_delete"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Delete"
+            android:background="@android:color/holo_red_dark"
             android:textSize="20sp"/>
     </LinearLayout>
 

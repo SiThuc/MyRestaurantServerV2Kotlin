@@ -1,6 +1,6 @@
 package com.example.myrestaurantv2kotlinserverapp.model
 
-class BestDealModel {
+class BestDealsModel {
     var key: String = ""
     var food_id: String = ""
     var menu_id: String = ""

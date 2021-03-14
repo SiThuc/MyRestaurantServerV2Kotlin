@@ -44,10 +44,10 @@ object Common {
         val boldSpan = StyleSpan(Typeface.BOLD)
         spannableString.setSpan(boldSpan, 0, name!!.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         spannableString.setSpan(
-            ForegroundColorSpan(color),
-            0,
-            name!!.length,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                ForegroundColorSpan(color),
+                0,
+                name!!.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         builder.append(spannableString)
         textView.setText(builder, TextView.BufferType.SPANNABLE)
@@ -65,59 +65,59 @@ object Common {
     }
 
     fun updateToken(
-        context: Context,
-        token: String,
-        isServerToken: Boolean,
-        isShipperToken: Boolean
+            context: Context,
+            token: String,
+            isServerToken: Boolean,
+            isShipperToken: Boolean
     ) {
         if (currentServerUser != null)
             FirebaseDatabase.getInstance()
-                .getReference(TOKEN_REF)
-                .child(currentServerUser!!.uid!!)
-                .setValue(
-                    TokenModel(
-                        currentServerUser!!.phone!!,
-                        token,
-                        isServerToken,
-                        isShipperToken
+                    .getReference(TOKEN_REF)
+                    .child(currentServerUser!!.uid!!)
+                    .setValue(
+                            TokenModel(
+                                    currentServerUser!!.phone!!,
+                                    token,
+                                    isServerToken,
+                                    isShipperToken
+                            )
                     )
-                )
-                .addOnFailureListener { e ->
-                    Toast.makeText(context, "" + e.message, Toast.LENGTH_SHORT).show()
-                }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(context, "" + e.message, Toast.LENGTH_SHORT).show()
+                    }
     }
 
     fun createOrderNumber(): String {
         return StringBuilder()
-            .append(System.currentTimeMillis())
-            .append(Math.abs(Random().nextInt()))
-            .toString()
+                .append(System.currentTimeMillis())
+                .append(Math.abs(Random().nextInt()))
+                .toString()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun showNotification(
-        context: Context,
-        id: Int,
-        title: String?,
-        content: String?,
-        intent: Intent?
+            context: Context,
+            id: Int,
+            title: String?,
+            content: String?,
+            intent: Intent?
     ) {
         Log.d("Notification", "Tittle:$title, Content:$content")
 
         var pendingIntent: PendingIntent? = null
         if (intent != null) {
             pendingIntent =
-                PendingIntent.getActivity(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    PendingIntent.getActivity(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
             val NOTIFICATION_CHANNEL_ID = "pham.thuc.myrestaurantv2.server"
 
             val notificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
             val notificationChannel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                "My Restaurant V2",
-                NotificationManager.IMPORTANCE_DEFAULT
+                    NOTIFICATION_CHANNEL_ID,
+                    "My Restaurant V2",
+                    NotificationManager.IMPORTANCE_DEFAULT
             )
             notificationChannel.description = "My Restaurant V2 Channel"
             notificationChannel.enableLights(true)
@@ -129,13 +129,13 @@ object Common {
 
             val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             builder.setContentTitle(title).setContentText(content).setAutoCancel(true)
-                .setSmallIcon(R.mipmap.ic_launcher_round)
-                .setLargeIcon(
-                    BitmapFactory.decodeResource(
-                        context.resources,
-                        R.drawable.ic_restaurant_24
+                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setLargeIcon(
+                            BitmapFactory.decodeResource(
+                                    context.resources,
+                                    R.drawable.ic_restaurant_24
+                            )
                     )
-                )
 
             if (pendingIntent != null)
                 builder.setContentIntent(pendingIntent)
@@ -202,6 +202,7 @@ object Common {
 
     }
 
+    var bestDealsSelected: BestDealsModel? = null
     val BEST_DEALS: String = "BestDeals"
     var currentOrderSelected: OrderModel? = null
     val SHIPPING_ORDER_REF: String = "ShipperOrders"
