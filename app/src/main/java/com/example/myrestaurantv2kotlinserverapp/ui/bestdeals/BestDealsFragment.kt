@@ -173,7 +173,6 @@ class BestDealsFragment : Fragment() {
                 .addOnFailureListener { e -> Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show() }
                 .addOnCompleteListener { task ->
                     viewModel.loadBestDeals()
-                    Common.bestDealsSelected = null
                     EventBus.getDefault().postSticky(ToastEvent(true, true))
                 }
     }
@@ -207,6 +206,7 @@ class BestDealsFragment : Fragment() {
                 .addOnFailureListener { e -> Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show() }
                 .addOnCompleteListener { task ->
                     viewModel.loadBestDeals()
+                    Common.bestDealsSelected = null
                     EventBus.getDefault().postSticky(ToastEvent(false, true))
                 }
     }

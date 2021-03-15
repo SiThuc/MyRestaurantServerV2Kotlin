@@ -45,15 +45,15 @@ class MyMostPopularAdapter(
 
                 viewBinderHelper.bind(binding.root, this.menu_id)
 
-//                binding.btnUpdate.setOnClickListener {
-//                    Common.bestDealsSelected = this
-//                    EventBus.getDefault().postSticky(UpdateBestDealsEvent(true))
-//                }
-//
-//                binding.btnDelete.setOnClickListener {
-//                    Common.bestDealsSelected = this
-//                    EventBus.getDefault().postSticky(DeleteBestDealsEvent(true))
-//                }
+                binding.btnUpdate.setOnClickListener {
+                    Common.mostPopularSelected = this
+                    EventBus.getDefault().postSticky(UpdateMostPopularEvent(true))
+                }
+
+                binding.btnDelete.setOnClickListener {
+                    Common.mostPopularSelected = this
+                    EventBus.getDefault().postSticky(DeleteMostPopularEvent(true))
+                }
 
             }
 
