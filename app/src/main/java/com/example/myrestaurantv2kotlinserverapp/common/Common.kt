@@ -202,6 +202,12 @@ object Common {
 
     }
 
+    fun getNewsTopic(): String {
+        return StringBuilder("/topics/news").toString()
+    }
+
+    val IMAGE_URL: String ="IMAGE_URL"
+    val IS_SEND_IMAGE: String = "IS_SEND_IMAGE"
     var mostPopularSelected: MostPopularModel? = null
     val MOST_POPULAR: String = "MostPopular"
     var bestDealsSelected: BestDealsModel? = null

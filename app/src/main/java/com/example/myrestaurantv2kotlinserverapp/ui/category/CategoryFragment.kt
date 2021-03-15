@@ -183,7 +183,7 @@ class CategoryFragment : Fragment() {
                     }
                 }
                 .addOnProgressListener { taskSnapShot ->
-                    var progress = (100 * taskSnapShot.bytesTransferred / taskSnapShot.totalByteCount)
+                    var progress = Math.round(100.0 * taskSnapShot.bytesTransferred / taskSnapShot.totalByteCount).toDouble()
                     dialog.setMessage(StringBuilder("Uploading: ").append(progress).append("%"))
                 }
     }

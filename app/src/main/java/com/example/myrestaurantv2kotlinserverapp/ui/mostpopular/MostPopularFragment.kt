@@ -135,7 +135,7 @@ class MostPopularFragment : Fragment() {
                             Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
                         }
                         .addOnProgressListener { taskSnapshot ->
-                            val progress = 100.0 * taskSnapshot.bytesTransferred/taskSnapshot.totalByteCount
+                            val progress = Math.round(100.0 * taskSnapshot.bytesTransferred/taskSnapshot.totalByteCount).toDouble()
                             dialog.setMessage("Uploaded $progress%")
                         }
                         .addOnSuccessListener { taskSnapshot ->
