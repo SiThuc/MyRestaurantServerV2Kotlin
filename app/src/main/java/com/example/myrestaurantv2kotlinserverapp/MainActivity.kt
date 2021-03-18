@@ -1,3 +1,4 @@
+
 package com.example.myrestaurantv2kotlinserverapp
 
 import android.app.Activity
@@ -70,14 +71,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun phoneLogin() {
-        val providers = arrayListOf(AuthUI.IdpConfig.PhoneBuilder().build())
+        val providers = arrayListOf(AuthUI.IdpConfig.PhoneBuilder().build(),
+                AuthUI.IdpConfig.EmailBuilder().build())
 
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
-                        .build(),
-                APP_REQUEST_CODE
+                        .setTheme(R.style.LoginTheme)
+                        .setLogo(R.drawable.logo)
+                        .build(), APP_REQUEST_CODE
         )
     }
 
@@ -126,7 +129,15 @@ class MainActivity : AppCompatActivity() {
         builder.setMessage("Please fill information for registering")
 
         val dialogBinding = LayoutRegisterBinding.inflate(layoutInflater)
-        dialogBinding.edtPhone.setText(user.phoneNumber.toString())
+
+        //Set Data
+        if(user.phoneNumber == null || TextUtils.isEmpty(user.phoneNumber)){
+            dialogBinding.phoneInputLayout.hint = "Email"
+            dialogBinding.edtPhone.setText(user.email)
+            dialogBinding.edtName.setText(user.displayName)
+        }else{
+            dialogBinding.edtPhone.setText(user.phoneNumber.toString())
+        }
 
         builder.setView(dialogBinding.root)
         builder.setNegativeButton("CANCEL"){dialogInterface,i -> dialogInterface.dismiss()}
