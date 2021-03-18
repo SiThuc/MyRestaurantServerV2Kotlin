@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ChatListActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.MyRestaurantV2KotlinServerApp.PopupOverlay">
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:id="@+id/toolbar"
+            android:background="@android:color/white"
+            android:titleTextColor="@android:color/black"
+            android:theme="@style/ToolbarColoredBackArrow"
+            android:popupTheme="@style/Theme.MyRestaurantV2KotlinServerApp.PopupOverlay"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/recycler_chat_list"
+        android:layout_below="@+id/toolbar_layout"
+        android:layout_marginTop="4dp"
+        app:stackFromEnd="true"/>
+
+</RelativeLayout>

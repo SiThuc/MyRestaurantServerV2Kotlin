@@ -19,6 +19,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.andremion.counterfab.CounterFab
 import com.example.myrestaurantv2kotlinserverapp.common.Common
 import com.example.myrestaurantv2kotlinserverapp.databinding.LayoutNewsSystemBinding
 import com.example.myrestaurantv2kotlinserverapp.evenbus.*
@@ -66,10 +67,14 @@ class HomeActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
+        val fabChat = findViewById<CounterFab>(R.id.fab_chat)
+        fabChat.setOnClickListener {
+            startActivity(Intent(this, ChatListActivity::class.java))
+        }
+
         ifcmService = RetrofitFCMClient.getInstance().create(IFCMService::class.java)
         storage = FirebaseStorage.getInstance()
         storageReference = storage.reference
-
         updateToken()
 
         subscribeToTopic(Common.getNewOrderTopic())

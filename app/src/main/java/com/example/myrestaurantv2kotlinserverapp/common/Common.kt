@@ -206,6 +206,7 @@ object Common {
         return StringBuilder("/topics/news").toString()
     }
 
+    val CHAT_REF: String = "Chats"
     val IMAGE_URL: String ="IMAGE_URL"
     val IS_SEND_IMAGE: String = "IS_SEND_IMAGE"
     var mostPopularSelected: MostPopularModel? = null
