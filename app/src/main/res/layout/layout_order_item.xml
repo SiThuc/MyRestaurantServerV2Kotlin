@@ -55,7 +55,16 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-
+        <TextView
+            android:id="@+id/btn_print"
+            android:background="@android:color/holo_purple"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:fontFamily="@font/brandon_medium"
+            android:text="Print"
+            android:textSize="18sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <androidx.cardview.widget.CardView

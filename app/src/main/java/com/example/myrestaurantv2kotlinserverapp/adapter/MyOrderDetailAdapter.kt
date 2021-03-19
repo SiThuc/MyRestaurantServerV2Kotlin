@@ -36,15 +36,24 @@ class MyOrderDetailAdapter(var context: Context,
             Glide.with(context).load(cartItem.foodImage).into(binding.imgFoodImage)
             binding.txtFoodName.text = cartItem.foodName
             binding.txtFoodQuantity.text = StringBuilder("Quantity: ").append(cartItem.foodQuantity).toString()
-            var sizeModel:SizeModel?=null
+
+            //Fix Crash
+            if(cartItem.foodSize == "Default"){
+                binding.txtSize.text = StringBuilder("Size: Default")
+            }else{
+                val sizeModel = gson.fromJson<SizeModel>(cartItem.foodSize, SizeModel::class.java)
+                binding.txtSize.text = StringBuilder("Size: ").append(sizeModel.name)
+            }
+
+/*            var sizeModel:SizeModel?=null
             try {
                 sizeModel = gson.fromJson(cartItem.foodSize, object : TypeToken<SizeModel?>() {}.type)
             }catch (exception: JsonSyntaxException){
                 Toast.makeText(context, "Json Exception: "+exception.message, Toast.LENGTH_SHORT).show()
             }
-
             if (sizeModel != null)
-                binding.txtSize.text = StringBuilder("Size: ").append(sizeModel.name)
+                binding.txtSize.text = StringBuilder("Size: ").append(sizeModel.name)*/
+
             if (cartItem.foodAddon != "Default") {
                 val addonModels: List<AddonModel> = gson.fromJson(cartItem.foodAddon, object : TypeToken<List<AddonModel?>?>() {}.type)
                 val addonString = StringBuilder()

@@ -51,6 +51,7 @@ import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.util.jar.Manifest
 
 
 class OrderFragment : Fragment(), IShipperLoadCallbackListener {
@@ -71,7 +72,7 @@ class OrderFragment : Fragment(), IShipperLoadCallbackListener {
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         orderViewModel =
                 ViewModelProvider(this).get(OrderViewModel::class.java)
         binding = FragmentOrderBinding.inflate(inflater, container, false)
@@ -518,8 +519,6 @@ class OrderFragment : Fragment(), IShipperLoadCallbackListener {
 
         EventBus.getDefault().removeStickyEvent(event)
     }
-
-
 
     private fun updateTextCounter() {
         binding.txtOrderFilter.text = StringBuilder("Order (").append(orderAdapter.itemCount).append(")")

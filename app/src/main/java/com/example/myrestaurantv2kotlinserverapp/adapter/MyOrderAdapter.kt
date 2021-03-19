@@ -9,6 +9,8 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,11 +21,14 @@ import com.example.myrestaurantv2kotlinserverapp.common.Common
 import com.example.myrestaurantv2kotlinserverapp.database.CartItem
 import com.example.myrestaurantv2kotlinserverapp.databinding.LayoutDialogOrderDetailBinding
 import com.example.myrestaurantv2kotlinserverapp.databinding.LayoutOrderItemBinding
-import com.example.myrestaurantv2kotlinserverapp.evenbus.CallCustomerEvent
-import com.example.myrestaurantv2kotlinserverapp.evenbus.DeleteOrderEvent
-import com.example.myrestaurantv2kotlinserverapp.evenbus.TrackOrderEvent
-import com.example.myrestaurantv2kotlinserverapp.evenbus.UpdateOrderEvent
+import com.example.myrestaurantv2kotlinserverapp.evenbus.*
 import com.example.myrestaurantv2kotlinserverapp.model.OrderModel
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.single.PermissionListener
 import org.greenrobot.eventbus.EventBus
 import java.lang.String
 import java.lang.StringBuilder
@@ -111,8 +116,30 @@ class MyOrderAdapter(
 
             //Show the directions
             binding.btnDirection.setOnClickListener {
-                Log.d("DEBUG", "Direction clicked")
                 EventBus.getDefault().postSticky(TrackOrderEvent(order, position))
+            }
+
+            //Show the directions
+            binding.btnPrint.setOnClickListener {
+                Dexter.withContext(context)
+                    .withPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    .withListener(object : PermissionListener {
+                        override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
+                            EventBus.getDefault().postSticky(PrintOrderEvent(
+                                StringBuilder(Common.getAppPath(context)).append(Common.FILE_PRINT).toString()
+                                ,order))
+                        }
+
+                        override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
+                            Toast.makeText(context, "You should accept this permission to print order", Toast.LENGTH_SHORT).show()
+                        }
+
+                        override fun onPermissionRationaleShouldBeShown(
+                            p0: PermissionRequest?,
+                            p1: PermissionToken?
+                        ) {
+                        }
+                    }).check()
             }
 
             binding.imgFoodImage.setOnClickListener {

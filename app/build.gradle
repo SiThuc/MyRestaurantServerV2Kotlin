@@ -96,5 +96,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:19.2.1'
     implementation 'com.github.andremion:counterfab:1.2.2'
 
+    //PDF
+    implementation 'com.itextpdf:itextg:5.5.10'
+
 
 }
